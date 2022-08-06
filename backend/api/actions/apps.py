@@ -529,7 +529,7 @@ async def all_stat_generator(request):
 
 async def process_app_stats(line, app_name):
     if line["memory_stats"]:
-        mem_current = line["memory_stats"]["usage"]
+        mem_current = line["memory_stats"]["usage"] - line["memory_stats"]["stats"]["inactive_file"]
         mem_total = line["memory_stats"]["limit"]
         mem_percent = (mem_current / mem_total) * 100.0
     else:
