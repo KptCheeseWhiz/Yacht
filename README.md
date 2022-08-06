@@ -1,3 +1,5 @@
+# NOTE: THIS FORK HAS MULTIPLE BUG FIXES BUT THEY WERE MADE WITHOUT COMPATIBILITY IN MIND, IT WORKS ON MY MACHINE, MIGHT NOT ON YOURS
+
 ![logo](https://raw.githubusercontent.com/SelfhostedPro/Yacht/master/readme_media/Yacht_logo_1_dark.png "templates")
 
 [![Docker Hub Pulls](https://img.shields.io/docker/pulls/selfhostedpro/yacht?color=%2341B883&label=Docker%20Pulls&logo=docker&logoColor=%2341B883&style=for-the-badge)](https://hub.docker.com/r/selfhostedpro/yacht)
