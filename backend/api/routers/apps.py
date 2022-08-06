@@ -73,7 +73,7 @@ def deploy_app(template: schemas.DeployForm, Authorize: AuthJWT = Depends()):
 async def logs(app_name: str, request: Request, Authorize: AuthJWT = Depends()):
     auth_check(Authorize)
     log_generator = actions.log_generator(request, app_name)
-    return EventSourceResponse(log_generator)
+    return EventSourceResponse(log_generator, ping=5)
 
 
 @router.get("/{app_name}/stats")
