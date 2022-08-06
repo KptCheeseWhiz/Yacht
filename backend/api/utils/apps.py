@@ -215,38 +215,15 @@ def conv_restart2data(data):
         restart = None
         return restart
 
-
-async def calculate_cpu_percent(d):
-    try:
-        cpu_count = len(d["cpu_stats"]["cpu_usage"]["percpu_usage"])
-    except KeyError as exc:
-        pass
-    cpu_percent = 0.0
-    cpu_delta = float(d["cpu_stats"]["cpu_usage"]["total_usage"]) - float(
-        d["precpu_stats"]["cpu_usage"]["total_usage"]
-    )
-    system_delta = float(d["cpu_stats"]["system_cpu_usage"]) - float(
-        d["precpu_stats"]["system_cpu_usage"]
-    )
-    if system_delta > 0.0:
-        cpu_percent = cpu_delta / system_delta * 100.0 * cpu_count
+def calculate_cpu_percent(line):
+    if "system_cpu_usage" not in line["precpu_stats"]:
+        return 0
+    cpu_percent = 0
+    cpu_delta = line["cpu_stats"]["cpu_usage"]["total_usage"] - line["precpu_stats"]["cpu_usage"]["total_usage"]
+    sys_delta = line["cpu_stats"]["system_cpu_usage"] - line["precpu_stats"]["system_cpu_usage"]
+    if cpu_delta > 0 and sys_delta > 0:
+        cpu_percent = (cpu_delta / sys_delta) * 100
     return cpu_percent
-
-
-async def calculate_cpu_percent2(d, previous_cpu, previous_system):
-    cpu_percent = 0.0
-    cpu_total = float(d["cpu_stats"]["cpu_usage"]["total_usage"])
-    cpu_delta = cpu_total - previous_cpu
-    cpu_system = float(d["cpu_stats"]["system_cpu_usage"])
-    system_delta = cpu_system - previous_system
-    # online_cpus = d["cpu_stats"].get(
-    #     "online_cpus", len(d["cpu_stats"]["cpu_usage"]["percpu_usage"])
-    # )
-    if system_delta > 0.0:
-        # cpu_percent = (cpu_delta / system_delta) * online_cpus * 100.0
-        cpu_percent = (cpu_delta / system_delta) * 100.0
-    return cpu_percent, cpu_system, cpu_total
-
 
 async def calculate_blkio_bytes(d):
     bytes_stats = graceful_chain_get(d, "blkio_stats", "io_service_bytes_recursive")
@@ -298,12 +275,11 @@ async def get_app_stats(app_name):
             mem_total = line["memory_stats"]["limit"]
 
             try:
-                cpu_percent, cpu_system, cpu_total = await calculate_cpu_percent2(
+                cpu_percent, cpu_system, cpu_total = await calculate_cpu_percent(
                     line, cpu_total, cpu_system
                 )
             except KeyError as e:
-                print(f"error while getting new CPU stats: {e}, falling back")
-                cpu_percent = await calculate_cpu_percent(line)
+                print(f"error while getting new CPU stats: {e}")
 
             full_stats = {
                 "name": line["name"],

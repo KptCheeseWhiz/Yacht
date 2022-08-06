@@ -5,7 +5,6 @@ from api.db.schemas import apps as schemas
 import api.actions.apps as actions
 from api.settings import Settings
 from api.auth.auth import auth_check
-from api.utils.apps import calculate_cpu_percent, calculate_cpu_percent2, format_bytes
 
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException

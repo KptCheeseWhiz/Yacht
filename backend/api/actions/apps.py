@@ -16,9 +16,7 @@ from api.utils.apps import (
     conv_volumes2data,
     conv_cpus2data,
     _check_updates,
-    calculate_cpu_percent,
-    calculate_cpu_percent2,
-    format_bytes,
+    calculate_cpu_percent
 )
 from api.utils.templates import conv2dict
 
@@ -530,9 +528,6 @@ async def all_stat_generator(request):
 
 
 async def process_app_stats(line, app_name):
-    cpu_total = 0.0
-    cpu_system = 0.0
-    cpu_percent = 0.0
     if line["memory_stats"]:
         mem_current = line["memory_stats"]["usage"]
         mem_total = line["memory_stats"]["limit"]
@@ -542,13 +537,11 @@ async def process_app_stats(line, app_name):
         mem_total = None
         mem_percent = None
 
+    cpu_percent = 0.0
     try:
-        cpu_percent, cpu_system, cpu_total = await calculate_cpu_percent2(
-            line, cpu_total, cpu_system
-        )
-    except KeyError:
-        print("error while getting new CPU stats: %r, falling back")
-        cpu_percent = await calculate_cpu_percent(line)
+        cpu_percent = calculate_cpu_percent(line)
+    except KeyError as e:
+        print(f"error while getting new CPU stats: {e}")
 
     full_stats = {
         "time": line["read"],
