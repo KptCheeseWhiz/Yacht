@@ -164,9 +164,7 @@ export default {
   },
   async created() {
     await this.readApps();
-    for (var app in this.apps) {
-      this.readAppStats(this.apps[app].name);
-    }
+    this.readAppStats();
   },
   beforeDestroy() {
     this.closeStats();
