@@ -1,5 +1,5 @@
 # Build Vue
-FROM node:14.5.0-alpine as build-stage
+FROM node:14-alpine as build-stage
 
 ARG VUE_APP_VERSION
 ENV VUE_APP_VERSION=${VUE_APP_VERSION}
