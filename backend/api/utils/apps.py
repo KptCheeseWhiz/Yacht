@@ -264,20 +264,15 @@ def graceful_chain_get(d, *args, default=None):
 
 async def get_app_stats(app_name):
     async with aiodocker.Docker() as docker:
-        cpu_total = 0.0
-        cpu_system = 0.0
-        cpu_percent = 0.0
-
         container: DockerContainer = await docker.containers.get(app_name)
         stats = container.stats(stream=True)
         async for line in stats:
+            cpu_percent = 0.0
             mem_current = line["memory_stats"]["usage"]
             mem_total = line["memory_stats"]["limit"]
 
             try:
-                cpu_percent, cpu_system, cpu_total = await calculate_cpu_percent(
-                    line, cpu_total, cpu_system
-                )
+                cpu_percent = calculate_cpu_percent(line)
             except KeyError as e:
                 print(f"error while getting new CPU stats: {e}")
 

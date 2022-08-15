@@ -533,9 +533,9 @@ async def process_app_stats(line, app_name):
         mem_total = line["memory_stats"]["limit"]
         mem_percent = (mem_current / mem_total) * 100.0
     else:
-        mem_current = None
-        mem_total = None
-        mem_percent = None
+        mem_current = 0.0
+        mem_total = 0.0
+        mem_percent = 0.0
 
     cpu_percent = 0.0
     try:
